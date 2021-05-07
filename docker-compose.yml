@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  sketchings:
+    build:
+      context: .
+      target: development
+    image: fast-playground_sketchings:development
+    user: $CURRENT_USER
+    ports:
+      - 6443:6443
+    depends_on:
+      - postgres
+    volumes:
+      - .:/sketchings:cached
+
+  postgres:
+    image: postgres:13.2-alpine
+    environment:
+      - POSTGRES_DB=sketchings_data
+      - POSTGRES_PASSWORD=password
+    ports:
+      - 5432:5432 # to connect psql
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

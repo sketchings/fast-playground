@@ -1,0 +1,35 @@
+[[source]]
+url = 'https://pypi.org/simple'
+verify_ssl = true
+name = 'pypi'
+
+[packages]
+fastapi = '0.63.0'
+uvicorn = '0.13.4'
+secure = "*"
+gunicorn = "*"
+uvloop = "*"
+httptools = "*"
+sqlalchemy = "*"
+alembic = "*"
+psycopg2 = "*"
+
+[dev-packages]
+asynctest = '<0.14'
+bandit = '<2'
+black = '==19.3b0'
+colorama = '<0.5'
+faker = '*'
+flake8 = '<3.8'
+ipython = '*'
+isort = '*'
+mypy = '*'
+pyflakes = '<2.2'
+pytest = '<7'
+pytest-asyncio = '<0.16'
+pytest-cov = '<2.12'
+pytest-randomly = '*'
+pytest-tornado = '~=0.8'
+
+[requires]
+python_version = '3.9'
