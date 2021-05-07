@@ -12,6 +12,7 @@ jobs:
   buildFormatLint:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: build development image
         run: make build
       - name: run linter
