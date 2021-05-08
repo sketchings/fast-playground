@@ -4,7 +4,11 @@ on:
   push:
     branches:
       - develop
+      - main
   pull_request:
+    branches:
+      - develop
+      - main
   workflow_dispatch:
   repository_dispatch:
 
@@ -13,20 +17,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: build development image
-        run: make build
-      - name: run linter
-        run: make lint
-      - name: run formatter
-        run: make format BLACK_ARGS=--check
-  imageTest:
-    needs: buildFormatLint
-    runs-on: ubuntu-latest
-    steps:
-      - name: launch test env
-        run: |
-          make up_db
-      - name: run tests
-        run: make test
-      - name: cleanup
-        run: docker-compose down -v
+      - uses: ./action-build-check
