@@ -29,8 +29,9 @@ jobs:
       - uses: actions/checkout@v2
       - name: build development image
         run: make build
-      - name: conditional run linter
-        if: ${{ github.event_name == 'pull_request' }}
-        run: make lint
-      - name: run formatter
-        run: make format BLACK_ARGS=--check
+      - name: conditional checks
+        if: github.event_name == 'pull_request'
+        run: |
+          make lint
+          echo run formatter
+          make format BLACK_ARGS=--check
