@@ -36,12 +36,12 @@ down:
 
 format: create_network
 	@$(DOCKER_RUN) black -t py37 src $(BLACK_ARGS)
-	@$(DOCKER_RUN) black -t py37 tests $(BLACK_ARGS)
+# 	@$(DOCKER_RUN) black -t py37 tests $(BLACK_ARGS)
 	@$(DOCKER_RUN) isort .
 
 lint: create_network
 	@$(DOCKER_RUN) flake8 src --statistics
-	@$(DOCKER_RUN) flake8 tests --statistics
+# 	@$(DOCKER_RUN) flake8 tests --statistics
 	@$(DOCKER_RUN) bandit -r src
 	@$(DOCKER_RUN) isort --check-only .
 
