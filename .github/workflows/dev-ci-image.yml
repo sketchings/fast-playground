@@ -6,19 +6,19 @@ on:
       - develop
       - main
     paths:
-      - '!Pipfile**'
-      - '!Dockerfile'
-      - '!Makefile'
-      - '!.github**'
+      - 'Pipfile**'
+      - 'Dockerfile'
+      - 'Makefile'
+      - '.github**'
   pull_request:
     branches:
       - develop
       - main
     paths:
-      - '!Pipfile**'
-      - '!Dockerfile'
-      - '!Makefile'
-      - '!.github**'
+      - 'Pipfile**'
+      - 'Dockerfile'
+      - 'Makefile'
+      - '.github**'
   workflow_dispatch:
   repository_dispatch:
 
@@ -29,5 +29,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: build development image
         run: make build
+      if github.event_name == "pull_request"
       - name: run linter
         run: make lint
+      - name: run formatter
+        run: make format BLACK_ARGS=--check
