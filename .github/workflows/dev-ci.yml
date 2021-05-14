@@ -9,7 +9,6 @@ on:
       - '!Pipfile**'
       - '!Dockerfile'
       - '!Makefile'
-      - '!.github**'
   pull_request:
     branches:
       - develop
@@ -18,7 +17,6 @@ on:
       - '!Pipfile**'
       - '!Dockerfile'
       - '!Makefile'
-      - '!.github**'
   workflow_dispatch:
   repository_dispatch:
 
