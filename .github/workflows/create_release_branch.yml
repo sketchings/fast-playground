@@ -13,6 +13,7 @@ jobs:
     steps:
     - name: Check out code
       uses: actions/checkout@v2
+      with:
         ref: develop
     - name: Create release branch
       run: git checkout -b test-${{ github.event.inputs.versionName }}
