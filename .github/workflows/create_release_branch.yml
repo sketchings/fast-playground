@@ -45,6 +45,7 @@ jobs:
         new_branch: ${{ github.event.inputs.prefix }}${{ steps.generate-version.outputs.new_version }}
       run: |
         jira-changelog --range origin/main..${new_branch} > chglog.md
+        echo -e "RELEASE $new_version\n$(cat chglog.md)" > chglog.md
     - name:
     - name: Commit changelog and manifest files
       id: make-commit
@@ -52,7 +53,7 @@ jobs:
         new_branch: ${{ github.event.inputs.prefix }}${{ steps.generate-version.outputs.new_version }}
       run: |
         git add src/_version.py
-        git commit --message < chglog.md
+        git commit -F chglog.md
     - name: Push new branch
       with:
         new_branch: ${{ github.event.inputs.prefix }}${{ steps.generate-version.outputs.new_version }}
