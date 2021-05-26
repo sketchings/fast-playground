@@ -16,6 +16,7 @@ async def set_secure_headers(request, call_next):
     secure_headers.framework.fastapi(response)
     return response
 
+app.include_router(playground.router)
 
 @app.get("/")
 def read_root():
