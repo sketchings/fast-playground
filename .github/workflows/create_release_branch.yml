@@ -58,3 +58,4 @@ jobs:
         new_branch: ${{ github.event.inputs.prefix }}${{ steps.generate-version.outputs.new_version }}
       run: git push origin $new_branch
     - name: slack notification
+      run: echo "send to slack"
