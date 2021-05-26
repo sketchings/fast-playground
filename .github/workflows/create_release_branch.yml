@@ -46,7 +46,6 @@ jobs:
       run: |
         jira-changelog --range origin/main..${new_branch} > chglog.md
         echo -e "RELEASE $new_version\n$(cat chglog.md)" > chglog.md
-    - name:
     - name: Commit changelog and manifest files
       id: make-commit
       with:
