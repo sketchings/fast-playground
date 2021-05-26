@@ -36,12 +36,14 @@ jobs:
     - name: Change version number and name
       run: |
         sed -i -E "s/__version__ = '.*'/__version__ = '${{ env.new_version }}'/g" 'src/_version.py'
+        cat src/_version.py
     - name: install jira-changelog
       run: sudo npm install -g jira-changelog
     - name: Write chagelog
       run: |
         jira-changelog --range origin/main..${{ env.new_branch }} > chglog.md
         echo -e "RELEASE ${{ env.new_version }}\n$(cat chglog.md)" > chglog.md
+        cat chglog.md
     - name: Commit changed version log
       id: make-commit
       run: |
