@@ -38,7 +38,7 @@ jobs:
         sed -i -E "s/__version__ = '.*'/__version__ = '${{ env.new_version }}'/g" 'src/_version.py'
     - name: install jira-changelog
       run: |
-        export PATH=$PATH:/opt/hostedtoolcache/node/14.17.0/x64/bin/
+        export PATH=$PATH:/opt/hostedtoolcache/node/14.17.0/x64/lib/node_modules/
         which npm
         node -v
         npm -v
