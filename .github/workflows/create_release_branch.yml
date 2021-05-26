@@ -43,9 +43,8 @@ jobs:
         node -v
         npm -v
         npm install -g jira-changelog
-        ls -al /opt/hostedtoolcache/node/14.17.0/x64/bin/npm
-        ls -al /opt/hostedtoolcache/node
         ls -al /opt/hostedtoolcache/node/14.17.0/x64/lib/node_modules/npm
+        ls -al /opt/hostedtoolcache/node/14.17.0/x64/lib/node_modules/npm/node_modules
     - name: Write chagelog
       run: |
         jira-changelog --range origin/main..${{ env.new_branch }} > chglog.md
