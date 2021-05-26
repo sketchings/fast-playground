@@ -35,7 +35,7 @@ jobs:
        git config user.email "alena+gha@holligan.us"
     - name: Change version number and name
       run: |
-        sed -i -E "s/__version__ = '.*'/__version__ = '${{ env.new_version }}'/g" 'src/_version.py'
+        sed -i -E "s/__version__ = \".*\"/__version__ = \"1.2.0\"/g" src/_version.py
         cat src/_version.py
     - name: install jira-changelog
       run: sudo npm install -g jira-changelog
