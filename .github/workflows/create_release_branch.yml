@@ -23,8 +23,8 @@ jobs:
         minor_version=$(echo $latest_tag | sed -r 's#'${prefix}'[0-9]+\.([0-9]+)\.[0-9]+#\1#')
         let minor_version+=1
         new_version=$(echo $latest_tag | sed -r 's#'${prefix}'([0-9]+\.)[0-9]+\.[0-9]+#\1'${minor_version}'.0#')
-        echo "::set-env name=new_version::$new_version"
-        echo "::set-env name=new_branch::${prefix}$new_version"
+        echo "new_version=$new_version" >> $GITHUB_ENV
+        echo "new_branch=${prefix}$new_version" >> $GITHUB_ENV
     - name: Create release branch
       run: git checkout -b ${new_branch}
     - name: Initialize mandatory git config
@@ -33,19 +33,19 @@ jobs:
        git config user.email "alena+gha@holligan.us"
     - name: Change version number and name
       run: |
-        sed -i -E "s/__version__ = '.*'/__version__ = '$new_version'/g" 'src/_version.py'
+        sed -i -E "s/__version__ = '.*'/__version__ = '${{ env.new_version }}'/g" 'src/_version.py'
     - name: install jira-changelog
       run: npm install -g jira-changelog
     - name: Write chagelog
       run: |
-        jira-changelog --range origin/main..${new_branch} > chglog.md
-        echo -e "RELEASE $new_version\n$(cat chglog.md)" > chglog.md
+        jira-changelog --range origin/main..${{ env.new_branch }} > chglog.md
+        echo -e "RELEASE ${{ env.new_version }}\n$(cat chglog.md)" > chglog.md
     - name: Commit changelog and manifest files
       id: make-commit
       run: |
         git add src/_version.py
         git commit -F chglog.md
     - name: Push new branch
-      run: git push origin $new_branch
+      run: git push origin ${{ env.new_branch }}
     - name: slack notification
       run: echo "send to slack"
