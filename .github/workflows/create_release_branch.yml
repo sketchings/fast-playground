@@ -2,10 +2,10 @@ name: Create Release Branch
 on:
   workflow_dispatch:
     inputs:
-      versionName:
-        description: 'Name of version  (ie 5.5.0)'
+      prefix:
+        default: 'test-'
+        description: 'Prefix for tag and branch'
         required: true
-        default: 1.67.0
 jobs:
   createrelease:
     runs-on: ubuntu-latest
@@ -15,35 +15,47 @@ jobs:
       uses: actions/checkout@v2
       with:
         ref: develop
+    - name: generate-version
+      with:
+        prefix: ${{ github.event.inputs.prefix }}
+      run: |
+        latest_tag=$(git tag --list "${prefix}*" --sort=v:refname|tail -1)
+        minor_version=$(echo $latest_tag | sed -r 's#'${prefix}'[0-9]+\.([0-9]+)\.[0-9]+#\1#')
+        let minor_version+=1
+        new_version=$(echo $latest_tag | sed -r 's#'${prefix}'([0-9]+\.)[0-9]+\.[0-9]+#\1'${minor_version}'.0#')
+        echo '::set-output name=new_version::${new_version}'
     - name: Create release branch
-      run: git checkout -b test-${{ github.event.inputs.versionName }}
+      with:
+        new_branch: ${{ github.event.inputs.prefix }}${{ steps.generate-version.outputs.new_version }}
+      run: git checkout -b ${new_branch}
     - name: Initialize mandatory git config
       run: |
        git config user.name "GitHub Actions"
        git config user.email "alena+gha@holligan.us"
     - name: Change version number and name
-      run: printf 'ext.version_code = ${{ github.event.inputs.versionCode }}\next.version_name = "${{ github.event.inputs.versionName }}"\n' > app_versions.gradle
-    - name: Update Changelog
-      uses: thomaseizinger/keep-a-changelog-new-release@v1
       with:
-        version: ${{ github.event.inputs.versionName }}
+        new_version: ${{ steps.generate-version.outputs.new_version }}
+      run: |
+        sed -i -E "s/__version__ = '.*'/__version__ = '$new_version'/g" 'src/_version.py'
+    - name: install jira-changelog
+      run: npm install -g jira-changelog
+    - name: Write chagelog
+      with:
+        new_version: ${{ steps.generate-version.outputs.new_version }}
+        new_branch: ${{ github.event.inputs.prefix }}${{ steps.generate-version.outputs.new_version }}
+      run: |
+        jira-changelog --range origin/main..${new_branch} > chglog.md
+        echo -e "RELEASE $new_version\n$(cat chglog.md)" > chglog.md
+    - name:
     - name: Commit changelog and manifest files
       id: make-commit
+      with:
+        new_branch: ${{ github.event.inputs.prefix }}${{ steps.generate-version.outputs.new_version }}
       run: |
         git add src/_version.py
-        git add CHANGELOG.md
-        git commit --message "Prepare release ${{ github.event.inputs.versionName }}"
-        echo "::set-output name=commit::$(git rev-parse HEAD)"
+        git commit -F chglog.md
     - name: Push new branch
-      run: git push origin test-${{ github.event.inputs.versionName }}
-    - name: Create pull request into main
-      uses: thomaseizinger/create-pull-request@1.0.0
       with:
-       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-       head: test-${{ github.event.inputs.versionName }}
-       base: main
-       title: Realse ${{ github.event.inputs.versionName }} into main
-       reviewers: ${{ github.event.issue.user.login }}
-       body: |
-           This PR was created in response workflow running.
-           I've updated the version name and code commit: ${{ steps.make-commit.outputs.commit }}.
+        new_branch: ${{ github.event.inputs.prefix }}${{ steps.generate-version.outputs.new_version }}
+      run: git push origin $new_branch
+    - name: slack notification
