@@ -42,11 +42,13 @@ jobs:
       run: |
         jira-changelog --range origin/main..${{ env.new_branch }} > chglog.md
         echo -e "RELEASE ${{ env.new_version }}\n$(cat chglog.md)" > chglog.md
-    - name: Commit changelog and manifest files
+    - name: Commit changed version log
       id: make-commit
       run: |
         git add src/_version.py
+        git status
         git commit -F chglog.md
+        cat chglog.md
     - name: Push new branch
       run: git push origin ${{ env.new_branch }}
     - name: slack notification
