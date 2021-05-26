@@ -1,14 +1,11 @@
 name: "Create Release Branch"
 on:
   workflow_dispatch:
-    inputs:
-      prefix:
-        default: 'test-'
-        description: 'Prefix for tag and branch'
-        required: true
 jobs:
   createrelease:
     runs-on: ubuntu-latest
+    env:
+      PREFIX: test-
 
     steps:
     - uses: actions/setup-node@v2
@@ -20,15 +17,16 @@ jobs:
       with:
         ref: develop
     - name: generate-version
-      env:
-        prefix: ${{ github.event.inputs.prefix }}
       run: |
-        latest_tag=$(git tag --list "${prefix}*" --sort=v:refname|tail -1)
-        minor_version=$(echo $latest_tag | sed -r 's#'${prefix}'[0-9]+\.([0-9]+)\.[0-9]+#\1#')
+        git pull
+        latest_tag=$(git tag --list "${env.PREFIX}*" --sort=v:refname|tail -1)
+        echo latest_tag
+        minor_version=$(echo $latest_tag | sed -r 's#'${env.PREFIX}'[0-9]+\.([0-9]+)\.[0-9]+#\1#')
         let minor_version+=1
-        new_version=$(echo $latest_tag | sed -r 's#'${prefix}'([0-9]+\.)[0-9]+\.[0-9]+#\1'${minor_version}'.0#')
+        echo minor_version
+        new_version=$(echo $latest_tag | sed -r 's#'${env.PREFIX}'([0-9]+\.)[0-9]+\.[0-9]+#\1'${minor_version}'.0#')
         echo "new_version=$new_version" >> $GITHUB_ENV
-        echo "new_branch=${prefix}$new_version" >> $GITHUB_ENV
+        echo "new_branch=${env.PREFIX}$new_version" >> $GITHUB_ENV
     - name: Create release branch
       run: git checkout -b ${new_branch}
     - name: Initialize mandatory git config
