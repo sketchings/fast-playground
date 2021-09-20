@@ -1,0 +1,34 @@
+name: "Create Release Branch"
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release Version (e.g., 1.78.1)'
+        required: true
+jobs:
+  createrelease:
+    runs-on: ubuntu-latest
+    env:
+      TAG_PREFIX: 'release-'
+      BRANCH_PREFIX: 'test-'
+      JIRA_API_USER: ${{ secrets.JIRA_API_USER }}
+      JIRA_API_HOST: ${{ secrets.JIRA_API_HOST }}
+      JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          ref: main
+          fetch-depth: 0  # needed to compare logs
+      - name: Add Node.js for installing jira-changelog
+        uses: actions/setup-node@25316bbc1f10ac9d8798711f44914b1cf3c4e954
+      - name: install jira-changelog
+        run: sudo npm install -g jira-changelog
+      - name: use input-version
+        run: |
+          echo "new_version=${{ github.event.inputs.version }}" >> $GITHUB_ENV
+          echo "new_branch=${{ env.BRANCH_PREFIX }}${{ github.event.inputs.version }}" >> $GITHUB_ENV
+          echo "new_tag=${{ env.TAG_PREFIX }}${{ github.event.inputs.version }}" >> $GITHUB_ENV
+      - name: Update Release Tags on Jira Tickets
+        run: jira-changelog --range origin/main..origin/${{ env.new_branch }} --release ${{ env.new_version }}
