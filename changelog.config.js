@@ -1,5 +1,3 @@
-var Haikunator = require('haikunator')
-
 module.exports = {
 
   // Jira integration
@@ -9,24 +7,21 @@ module.exports = {
     api: {
       // Root host of your JIRA installation without protocol.
       // (i.e 'yourapp.atlassian.net')
-      host: undefined,
+      host: process.env.JIRA_API_HOST,
       // Email address of the user to login with
-      email: undefined,
+      email: process.env.JIRA_API_USER,
       // Auth token of the user to login with
       // https://confluence.atlassian.com/cloud/api-tokens-938839638.html
-      token: undefined,
-      // If you need to set some jira-client option use this object.
-      // Check jira-client docs for available options: https://jira-node.github.io/typedef/index.html#static-typedef-JiraApiOptions
-      options: {},
+      token: process.env.JIRA_API_TOKEN,
     },
 
     // Jira base web URL
     // Set to the base URL for your Jira account
-    baseUrl: 'https://atlassian.net',
+    baseUrl: 'https://' + process.env.JIRA_API_HOST,
 
     // Regex used to match the issue ticket key
     // Use capture group one to isolate the key text within surrounding characters (if needed).
-    ticketIDPattern: /\[([A-Z]+\-[0-9]+)\]/i,
+    ticketIDPattern: /(?:from sketchings\/|^|Revert ")([A-Z]+[-][0-9]+)(?:[A-Z0-9-]*| .*\(#\d+\))/i,
 
     // Status names that mean the ticket is approved.
     approvalStatus: ['Done', 'Closed', 'Accepted'],
@@ -76,7 +71,7 @@ module.exports = {
     // and or after/before datestamps.
     defaultRange: {
       from: "origin/main",
-      to: "origin/test",
+      to: "origin/develop",
 
       // symmetric='...'
       // non-symmetric='..'
