@@ -1,6 +1,7 @@
 theme: jekyll-theme-minimal
-source: /docs
+source: /docs/
 includes_dir: /
+layouts_dir: /docs/_layouts/
 plugins:
   - jekyll-feed
   - jekyll-relative-links
