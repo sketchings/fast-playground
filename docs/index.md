@@ -1,5 +1,6 @@
 ## Welcome to GitHub Pages
-{% include_absolute '../CHANGELOG.md' %}
+
+{% include /hide/README.md %}
 
 You can use the [editor on GitHub](https://github.com/sketchings/fast-playground/edit/main/docs/index.md) to maintain and preview the content for your website in Markdown files.
 
