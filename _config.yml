@@ -1,5 +1,5 @@
 theme: jekyll-theme-minimal
-source: /
+source: /docs
 includes_dir: /
 plugins:
   - jekyll-feed
