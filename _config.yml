@@ -8,6 +8,3 @@ relative_links:
   collections: false
 exclude:
  - hide/
-include:
- - hide/README.md
- 
